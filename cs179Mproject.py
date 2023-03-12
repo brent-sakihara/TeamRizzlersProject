@@ -1,3 +1,5 @@
+import datetime
+
 def getCol(containers):
     smallest = [[0,0],999]
     for col in containers:
@@ -6,7 +8,6 @@ def getCol(containers):
             smallest[1] = col[0][1]
     if smallest[1] == 999:
         return 0
-    containers[smallest[0][1]].pop(0)
     return smallest
 
 def getDistance(i,j,heights,containers):
@@ -28,7 +29,7 @@ def getDistance(i,j,heights,containers):
         return [min_no_container,no_container_ind]
     elif min_with_container < 1000:
         return [min_with_container,container_ind]
-    moves_to_buffer = (7-i+j+4)
+    moves_to_buffer = (8-i+j+4)
     return [moves_to_buffer,-1]
 
 def getClosestDistance(i,j,heights):
@@ -72,15 +73,18 @@ def getMass(ship):
     return [left,right]
 
 def main():
+    log_file = open("logfile1.txt", "w")
     # signing in
     print("Hello and welcome to Mr Keogh's shipping dock.")
     print("Enter your full name to sign in and start working")
     first_name = input("First Name: ")
     last_name = input("Last Name: ")
     print("Welcome " + first_name + " " + last_name)
+    log_file.write(str(datetime.datetime.now()) + " " + first_name + " " + last_name + " signs in\n")
 
     # selecting manifest
     manifest_file_name = input("Please enter the manifest file name that you would like to open: ")
+    container_count = 0
     file = open(manifest_file_name, "r")
     ship = [[],[],[],[],[],[],[],[]]
     for line in file:
@@ -89,8 +93,12 @@ def main():
         weight = line[10:15].lstrip('0')
         if weight == "":
             weight = "0"
+        else:
+            container_count += 1
         name = line[18:].strip()
         ship[row-1].append([int(weight),name])
+    file.close()
+    log_file.write(str(datetime.datetime.now()) + " Manifest " + manifest_file_name + " is opened, there are " + str(container_count) + " containers on the ship\n")
 
     for s in ship:
         print(s)
@@ -128,9 +136,9 @@ def main():
             for j in range(len(ship[i])):
                 if ship[i][j][1] in container_freq:
                     if ship[i][j][1] in containers:
-                        containers[ship[i][j][1]].append([[i,j],heights[j] - 1 - i])
+                        containers[ship[i][j][1]].append([[i,j],heights[j] - 1 - i,ship[i][j]])
                     else:
-                        containers[ship[i][j][1]] = [[[i,j],heights[j] - 1 - i]]
+                        containers[ship[i][j][1]] = [[[i,j],heights[j] - 1 - i,ship[i][j]]]
         for container in containers:
             containers[container].sort(key=lambda x:x[1])
             while len(containers[container]) > container_freq[container]:
@@ -144,7 +152,7 @@ def main():
             col.sort(key=lambda x:x[1])
             # print(col)
         
-        # start moving containers
+        # start moving and offloading containers
         total_distance = 0
         buffercount = 0
         smallest = getCol(containers_by_col)
@@ -162,16 +170,40 @@ def main():
                     total_distance += (dst*2)
                     buffercount += 1
                 print(heights)
-            total_distance += (7-smallest[0][0]+smallest[0][1])
+            total_distance += (8-smallest[0][0]+smallest[0][1])
             for elem in containers_by_col[smallest[0][1]]:
                 elem[1] -= (smallest[1] + 1)
                 print(elem)
             heights[smallest[0][1]] -= 1
+            log_file.write(str(datetime.datetime.now()) + " " + containers_by_col[smallest[0][1]][0][2][1] + " container is offloaded\n")
             print(heights)
             print(total_distance)
+            containers_by_col[smallest[0][1]].pop(0)
             smallest = getCol(containers_by_col)
         for i in range(buffercount):
-            total_distance += (getClosestDistance(7,0,heights) + 4)
+            dst = getClosestDistance(8,0,heights)
+            total_distance += (dst[0] + 4)
+            heights[dst[1]] += 1
+
+        # start onloading container process
+        containers_to_load = []
+        print("Once you are done with entering containers, enter q to quit")
+        while(1):
+            container_name = input("Please enter a container you would like to load onto the ship: ")
+            if(container_name == "q"):
+                break
+            else:
+                containers_to_load.append(container_name)
+        for i in range(len(containers_to_load)):
+            dst = getClosestDistance(8,0,heights)
+            total_distance += (dst[0] + 2)
+            heights[dst[1]] += 1
+            log_file.write(str(datetime.datetime.now()) + " " + containers_to_load[i] + " container is onloaded\n")
+        print(total_distance)
+        print(heights)
+        
+        log_file.write(str(datetime.datetime.now()) + " Finished a Cycle. Manifest " + manifest_file_name + " was written to desktop, and a reminder popup to operator to send file was displayed")
+        print("Please send the manifest file to the ship captain")
 
 
 
@@ -309,7 +341,7 @@ def main():
         for i in range(buffercount):
             total_distance += (getClosestDistance(7,0,heights) + 4)
     
-    file.close()
+    log_file.close()
 
 if __name__ == "__main__":
     main()
