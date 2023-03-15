@@ -147,6 +147,9 @@ def logoutoption(first_name, last_name, log_file):
         return signin(first_name, last_name, log_file)
     else:
         return [first_name, last_name]
+    
+def manhattan(i,j,k,l):
+    return abs(i - k) + abs(j - l)
 
 def main():
     log_file = open("logfile1.txt", "w")
@@ -230,6 +233,8 @@ def main():
         # start moving and offloading containers
         total_distance = 0
         buffercount = 0
+        lastrow = 8
+        lastcol = 0
         smallest = getCol(containers_by_col)
         while smallest != 0:
             # print(smallest)
@@ -241,12 +246,18 @@ def main():
                 heights[smallest[0][1]] -= 1
                 if dist[1] != -1:
                     # print(heights[dist[1]], dist[1])
+                    total_distance += manhattan(lastrow, lastcol, smallest[0][0] + smallest[1] - i, smallest[0][1])
+                    lastrow = heights[dist[1]]
+                    lastcol = dist[1]
                     printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1],heights[dist[1]], dist[1], heights)
                     heights[dist[1]] += 1
                 else:
+                    total_distance += manhattan(lastrow, lastcol, smallest[0][0] + smallest[1] - i, smallest[0][1])
+                    lastrow = 8
+                    lastcol = 0
                     printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1], 8, 0, heights)
-                    dst = getClosestDistance(7,11,bufferheights)
-                    total_distance += (dst*2)
+                    dst = getClosestDistance(8,11,bufferheights)
+                    total_distance += (dst*4) + 4
                     buffercount += 1
                 name = logoutoption(first_name, last_name, log_file)
                 first_name = name[0]
@@ -255,11 +266,14 @@ def main():
                 # print(heights)
             # print(smallest[0][0], smallest[0][1])
             # print("8 0")
-            total_distance += (8-smallest[0][0]+smallest[0][1])
+            total_distance += (8-smallest[0][0]+smallest[0][1]) + 4
             for elem in containers_by_col[smallest[0][1]]:
                 elem[1] -= (smallest[1] + 1)
                 # print(elem)
             heights[smallest[0][1]] -= 1
+            total_distance += manhattan(lastrow, lastcol, smallest[0][0], smallest[0][1])
+            lastrow = 8
+            lastcol = 0
             printGrid(smallest[0][0],smallest[0][1],8,0,heights)
             log_file.write(str(datetime.datetime.now()) + " " + containers_by_col[smallest[0][1]][0][2][1] + " container is offloaded\n")
             # print(heights)
@@ -271,7 +285,7 @@ def main():
             last_name = name[1]
         for i in range(buffercount):
             dst = getClosestDistance(8,0,heights)
-            total_distance += (dst[0] + 4)
+            total_distance += (dst[0]*2 + 8)
             printGrid(8,0,heights[dst[1]],dst[1],heights)
             heights[dst[1]] += 1
             name = logoutoption(first_name, last_name, log_file)
@@ -289,7 +303,7 @@ def main():
                 containers_to_load.append(container_name)
         for i in range(len(containers_to_load)):
             dst = getClosestDistance(8,0,heights)
-            total_distance += (dst[0] + 2)
+            total_distance += ((dst[0] + 2)*2)
             printGrid(8,0,heights[dst[1]],dst[1],heights)
             heights[dst[1]] += 1
             log_file.write(str(datetime.datetime.now()) + " " + containers_to_load[i] + " container is onloaded\n")
