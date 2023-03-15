@@ -1,4 +1,62 @@
 import datetime
+from time import sleep
+
+def printG(rows):
+    for row in rows:
+        print(row)
+    print()
+
+def makeRows(i,j,heights):
+    rows = []
+    r = []
+    for n in range(len(heights)):
+        if i == -1 and j == n:
+            r.append("O")
+        else:
+            r.append("N")
+    rows.append(r)
+    for n in range(8):
+        row = []
+        for n2 in range(len(heights)):
+            if n == i and n2 == j:
+                row.append("O")
+            elif heights[n2] >= 8-n:
+                row.append("X")
+            else:
+                row.append(" ")
+        rows.append(row)
+    printG(rows)
+
+def printGrid(i,j,k,l,heights):
+    while 1:
+        if k > i:
+            for n in range(k-i+1):
+                makeRows(7-(i+n),j,heights)
+                sleep(2.0)
+            if l < j:
+                for n2 in range(j-l):
+                    makeRows(7-k,j-n2-1,heights)
+                    sleep(2.0)
+            else:
+                for n2 in range(l-j):
+                    makeRows(7-k,j+n2+1,heights)
+                    sleep(2.0)
+        else:
+            if l < j:
+                for n2 in range(j-l+1):
+                    makeRows(7-i,j-n2,heights)
+                    sleep(2.0)
+            else:
+                for n2 in range(l-j+1):
+                    makeRows(7-i,j+n2,heights)
+                    sleep(2.0)
+            for n in range(i-k):
+                makeRows(7-(i-n-1),l,heights)
+                sleep(2.0)
+        key = input("Enter q to go to next step or any other key to repeat animation: ")
+        if key == "q":
+            break
+        
 
 def getCol(containers):
     smallest = [[0,0],999]
@@ -72,15 +130,32 @@ def getMass(ship):
             right += row[num+6][0]
     return [left,right]
 
-def main():
-    log_file = open("logfile1.txt", "w")
-    # signing in
+def signin(first_name, last_name, log_file):
     print("Hello and welcome to Mr Keogh's shipping dock.")
     print("Enter your full name to sign in and start working")
     first_name = input("First Name: ")
     last_name = input("Last Name: ")
     print("Welcome " + first_name + " " + last_name)
+    print()
     log_file.write(str(datetime.datetime.now()) + " " + first_name + " " + last_name + " signs in\n")
+    return [first_name, last_name]
+
+def logoutoption(first_name, last_name, log_file):
+    userselection = input("Enter s to logout or any other key to continue to the next step: ")
+    if userselection == "s":
+        log_file.write(str(datetime.datetime.now()) + " " + first_name + " " + last_name + " signs out\n")
+        return signin(first_name, last_name, log_file)
+    else:
+        return [first_name, last_name]
+
+def main():
+    log_file = open("logfile1.txt", "w")
+    first_name = ""
+    last_name = ""
+    # signing in
+    name = signin(first_name, last_name, log_file)
+    first_name = name[0]
+    last_name = name[1]
 
     # selecting manifest
     manifest_file_name = input("Please enter the manifest file name that you would like to open: ")
@@ -100,8 +175,8 @@ def main():
     file.close()
     log_file.write(str(datetime.datetime.now()) + " Manifest " + manifest_file_name + " is opened, there are " + str(container_count) + " containers on the ship\n")
 
-    for s in ship:
-        print(s)
+    # for s in ship:
+    #     print(s)
 
     # selecting task
     print("What would you like to do?")
@@ -157,33 +232,51 @@ def main():
         buffercount = 0
         smallest = getCol(containers_by_col)
         while smallest != 0:
-            print(smallest)
-            print(containers_by_col)
+            # print(smallest)
+            # print(containers_by_col)
             for i in range(smallest[1]):
                 dist = getDistance(heights[smallest[0][1]]-1,smallest[0][1],heights,containers_by_col)
                 total_distance += dist[0]
+                # print(smallest[0][0] + smallest[1] - i, smallest[0][1])
                 heights[smallest[0][1]] -= 1
                 if dist[1] != -1:
+                    # print(heights[dist[1]], dist[1])
+                    printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1],heights[dist[1]], dist[1], heights)
                     heights[dist[1]] += 1
                 else:
+                    printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1], 8, 0, heights)
                     dst = getClosestDistance(7,11,bufferheights)
                     total_distance += (dst*2)
                     buffercount += 1
-                print(heights)
+                name = logoutoption(first_name, last_name, log_file)
+                first_name = name[0]
+                last_name = name[1]
+
+                # print(heights)
+            # print(smallest[0][0], smallest[0][1])
+            # print("8 0")
             total_distance += (8-smallest[0][0]+smallest[0][1])
             for elem in containers_by_col[smallest[0][1]]:
                 elem[1] -= (smallest[1] + 1)
-                print(elem)
+                # print(elem)
             heights[smallest[0][1]] -= 1
+            printGrid(smallest[0][0],smallest[0][1],8,0,heights)
             log_file.write(str(datetime.datetime.now()) + " " + containers_by_col[smallest[0][1]][0][2][1] + " container is offloaded\n")
-            print(heights)
-            print(total_distance)
+            # print(heights)
+            # print(total_distance)
             containers_by_col[smallest[0][1]].pop(0)
-            smallest = getCol(containers_by_col)
+            smallest = getCol(containers_by_col)  
+            name = logoutoption(first_name, last_name, log_file)
+            first_name = name[0]
+            last_name = name[1]
         for i in range(buffercount):
             dst = getClosestDistance(8,0,heights)
             total_distance += (dst[0] + 4)
+            printGrid(8,0,heights[dst[1]],dst[1],heights)
             heights[dst[1]] += 1
+            name = logoutoption(first_name, last_name, log_file)
+            first_name = name[0]
+            last_name = name[1]
 
         # start onloading container process
         containers_to_load = []
@@ -197,10 +290,14 @@ def main():
         for i in range(len(containers_to_load)):
             dst = getClosestDistance(8,0,heights)
             total_distance += (dst[0] + 2)
+            printGrid(8,0,heights[dst[1]],dst[1],heights)
             heights[dst[1]] += 1
             log_file.write(str(datetime.datetime.now()) + " " + containers_to_load[i] + " container is onloaded\n")
-        print(total_distance)
-        print(heights)
+            name = logoutoption(first_name, last_name, log_file)
+            first_name = name[0]
+            last_name = name[1]
+        print("total number of minutes moving containers is: ", total_distance)
+        # print(heights)
         
         log_file.write(str(datetime.datetime.now()) + " Finished a Cycle. Manifest " + manifest_file_name + " was written to desktop, and a reminder popup to operator to send file was displayed")
         print("Please send the manifest file to the ship captain")
