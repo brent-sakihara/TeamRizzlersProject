@@ -1,57 +1,105 @@
 import datetime
 from time import sleep
 import math #to avoid spurious precision
+import termcolor2
+#https://www.geeksforgeeks.org/clear-screen-python/
+import colorama
+import os
+
+global INITIAL
+global FINAL
 
 def printG(rows):
     for row in rows:
-        print(row)
+        print(' '.join(row))
+        # print(row)
     print()
 
 def makeRows(i,j,heights):
+    colorama.init()
     rows = []
     r = []
     for n in range(len(heights)):
         if i == -1 and j == n:
-            r.append("O")
+            r.append(termcolor2.colored('🬀 ', 'magenta'))
         else:
-            r.append("N")
+            # r.append("║N║")
+            r.append(termcolor2.colored('╳ ', 'cyan'))
     rows.append(r)
     for n in range(8):
         row = []
         for n2 in range(len(heights)):
             if n == i and n2 == j:
-                row.append("O")
+                row.append(termcolor2.colored('█ ', 'yellow')) #change this to whatever color u want
             elif heights[n2] >= 8-n:
-                row.append("X")
+                row.append(termcolor2.colored('█ ', "green"))
+                # row.append('█ ')
             else:
-                row.append(" ")
+                row.append("  ")
         rows.append(row)
-    printG(rows)
+    # printG(rows)
+    #took inspiration from one of my personal projects
+    #https://github.com/bshah016/CS_Projects/blob/master/TTT.py
+    print('\
+ ╔════╦════╦════╦════╦════╦════╦════╦════╦════╦════╦════╦════╗\t\n\
+ ║ {0} ║ {1} ║ {2} ║ {3} ║ {4} ║ {5} ║ {6} ║ {7} ║ {8} ║ {9} ║ {10} ║ {11} ║\t\n\
+ ╠════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╣\t\n\
+ ║ {12} ║ {13} ║ {14} ║ {15} ║ {16} ║ {17} ║ {18} ║ {19} ║ {20} ║ {21} ║ {22} ║ {23} ║\t\n\
+ ╠════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╣\t\n\
+ ║ {24} ║ {25} ║ {26} ║ {27} ║ {28} ║ {29} ║ {30} ║ {31} ║ {32} ║ {33} ║ {34} ║ {35} ║\t\n\
+ ╠════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╣\t\n\
+ ║ {36} ║ {37} ║ {38} ║ {39} ║ {40} ║ {41} ║ {42} ║ {43} ║ {44} ║ {45} ║ {46} ║ {47} ║\t\n\
+ ╠════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╣\t\n\
+ ║ {48} ║ {49} ║ {50} ║ {51} ║ {52} ║ {53} ║ {54} ║ {55} ║ {56} ║ {57} ║ {58} ║ {59} ║\t\n\
+ ╠════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╣\t\n\
+ ║ {60} ║ {61} ║ {62} ║ {63} ║ {64} ║ {65} ║ {66} ║ {67} ║ {68} ║ {69} ║ {70} ║ {71} ║\t\n\
+ ╠════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╣\t\n\
+ ║ {72} ║ {73} ║ {74} ║ {75} ║ {76} ║ {77} ║ {78} ║ {79} ║ {80} ║ {81} ║ {82} ║ {83} ║\t\n\
+ ╠════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╣\t\n\
+ ║ {84} ║ {85} ║ {86} ║ {87} ║ {88} ║ {89} ║ {90} ║ {91} ║ {92} ║ {93} ║ {94} ║ {95} ║\t\n\
+ ╠════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╣\t\n\
+ ║ {96} ║ {97} ║ {98} ║ {99} ║ {100} ║ {101} ║ {102} ║ {103} ║ {104} ║ {105} ║ {106} ║ {107} ║\t\n\
+ ╚════╩════╩════╩════╩════╩════╩════╩════╩════╩════╩════╩════╝ \t'.format(
+               rows[0][0], rows[0][1], rows[0][2], rows[0][3],rows[0][4], rows[0][5], rows[0][6], rows[0][7],rows[0][8], rows[0][9], rows[0][10], rows[0][11], 
+               rows[1][0], rows[1][1], rows[1][2], rows[1][3],rows[1][4], rows[1][5], rows[1][6], rows[1][7],rows[1][8], rows[1][9], rows[1][10], rows[1][11], 
+               rows[2][0], rows[2][1], rows[2][2], rows[2][3],rows[2][4], rows[2][5], rows[2][6], rows[2][7],rows[2][8], rows[2][9], rows[2][10], rows[2][11], 
+               rows[3][0], rows[3][1], rows[3][2], rows[3][3],rows[3][4], rows[3][5], rows[3][6], rows[3][7],rows[3][8], rows[3][9], rows[3][10], rows[3][11], 
+               rows[4][0], rows[4][1], rows[4][2], rows[4][3],rows[4][4], rows[4][5], rows[4][6], rows[4][7],rows[4][8], rows[4][9], rows[4][10], rows[4][11], 
+               rows[5][0], rows[5][1], rows[5][2], rows[5][3],rows[5][4], rows[5][5], rows[5][6], rows[5][7],rows[5][8], rows[5][9], rows[5][10], rows[5][11], 
+               rows[6][0], rows[6][1], rows[6][2], rows[6][3],rows[6][4], rows[6][5], rows[6][6], rows[6][7],rows[6][8], rows[6][9], rows[6][10], rows[6][11], 
+               rows[7][0], rows[7][1], rows[7][2], rows[7][3],rows[7][4], rows[7][5], rows[7][6], rows[7][7],rows[7][8], rows[7][9], rows[7][10], rows[7][11],
+               rows[8][0], rows[8][1], rows[8][2], rows[8][3],rows[8][4], rows[8][5], rows[8][6], rows[8][7],rows[8][8], rows[8][9], rows[8][10], rows[8][11]))
 
 def printGrid(i,j,k,l,heights):
     while 1:
         if k > i:
             for n in range(k-i+1):
+                os.system('clear')
                 makeRows(7-(i+n),j,heights)
                 sleep(2.0)
             if l < j:
                 for n2 in range(j-l):
+                    os.system('clear')
                     makeRows(7-k,j-n2-1,heights)
                     sleep(2.0)
             else:
                 for n2 in range(l-j):
+                    os.system('clear')
                     makeRows(7-k,j+n2+1,heights)
                     sleep(2.0)
         else:
             if l < j:
                 for n2 in range(j-l+1):
+                    os.system('clear')
                     makeRows(7-i,j-n2,heights)
                     sleep(2.0)
             else:
                 for n2 in range(l-j+1):
+                    os.system('clear')
                     makeRows(7-i,j+n2,heights)
                     sleep(2.0)
             for n in range(i-k):
+                os.system('clear')
                 makeRows(7-(i-n-1),l,heights)
                 sleep(2.0)
         key = input("Enter q to go to next step or any other key to repeat animation: ")
