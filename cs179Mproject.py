@@ -1,5 +1,6 @@
 import datetime
 from time import sleep
+import math #to avoid spurious precision
 
 def printG(rows):
     for row in rows:
@@ -90,6 +91,64 @@ def getDistance(i,j,heights,containers):
     moves_to_buffer = (8-i+j+4)
     return [moves_to_buffer,-1]
 
+def getDistanceForBalance(i,j,heights,containers, left):
+    if left: 
+        min_no_container = 1000
+        no_container_ind = -1
+        min_with_container = 1000
+        container_ind = -1
+        for ind in range(len(heights)):
+            if ind <= 6:
+                if ind != j and heights[ind] < 8:
+                    if len(containers[ind]) == 0:
+                        if abs(i-heights[ind]) + abs(j-ind) < min_no_container:
+                            min_no_container = abs(i-heights[ind]) + abs(j-ind)
+                            no_container_ind = ind
+                    else:
+                        if abs(i-heights[ind]) + abs(j-ind) < min_with_container:
+                            min_with_container = abs(i-heights[ind]) + abs(j-ind)
+                            container_ind = ind
+        if min_no_container < 1000:
+            return [min_no_container,no_container_ind]
+        elif min_with_container < 1000:
+            return [min_with_container,container_ind]
+        moves_to_buffer = (8-i+j+4)
+        return [moves_to_buffer,-1]
+    else:
+        min_no_container = 1000
+        no_container_ind = -1
+        min_with_container = 1000
+        container_ind = -1
+        print("dist containers:")
+        print(containers)
+        length = len(heights)
+        print("length: " + str(length))
+        print(heights)
+        # heights = heights[-6:]
+        for ind in range(len(heights)):
+            if ind >= 6:
+                if heights[ind] < 8:
+                    if len(containers[ind]) == 0:
+                        if abs(i-heights[ind]) + abs(j-ind) < min_no_container:
+                            print("yessirski2")
+                            print("ind: " + str(ind))
+                            print("heights: " + str(heights[ind]))
+                            min_no_container = abs(i-heights[ind])
+                            no_container_ind = ind
+                    else:
+                        if abs(i-heights[ind]) + abs(j-ind) < min_with_container:
+                            min_with_container = abs(i-heights[ind]) + abs(j-ind)
+                            container_ind = ind
+        if min_no_container < 1000:
+            print("ind bruh: " + str(no_container_ind))
+            print(heights[no_container_ind])
+            return [heights[no_container_ind],no_container_ind]
+            # return [min_no_container,no_container_ind]
+        elif min_with_container < 1000:
+            return [min_with_container,container_ind]
+        moves_to_buffer = (8-i+j+4)
+        return [moves_to_buffer,-1]
+
 def getClosestDistance(i,j,heights):
     mindist = 1000
     container_ind = -1
@@ -100,26 +159,26 @@ def getClosestDistance(i,j,heights):
                 container_ind = ind
     return [mindist, container_ind]
 
-def getClosestDistanceForBalance(i,j,heights, left):
+def getClosestDistanceForBalance(i,j,heights,left):
     print(heights)
     if left:
         mindist = 1000
         container_ind = -1
-        for ind in range(len(heights[0:7])):
+        for ind in range(len(heights)):
             if heights[ind] < 8:
                 if abs(i-heights[ind]) + abs(j-ind) < mindist:
                     mindist = abs(i-heights[ind]) + abs(j-ind)
                     container_ind = ind
-        return [mindist + 6 - i, container_ind]
+        return [mindist, container_ind]
     else:
         mindist = 1000
         container_ind = -1
-        for ind in range(len(heights[-6:])):
+        for ind in range(len(heights)):
             if heights[ind] < 8:
                 if abs(i-heights[ind]) + abs(j-ind) < mindist:
                     mindist = abs(i-heights[ind]) + abs(j-ind)
                     container_ind = ind
-        return [mindist + i - 6, container_ind]
+        return [mindist, container_ind]
 
 def getMass(ship):
     left = 0
@@ -329,11 +388,11 @@ def main():
         masses = getMass(ship)
         balancemass = (masses[0] + masses[1])/2
         left = False
-        if min(masses[0], masses[1]) == masses[0]:
+        if min(masses) == masses[0]:
             left = True
-        deficit = balancemass - min(masses[0],masses[1])
-        lowerbound_deficit = (0.9*max(masses[0],masses[1]) - min(masses[0],masses[1]))/1.9
-        print(deficit)
+        # deficit = balancemass - masses[0]
+        lowerbound_deficit = math.ceil((max(masses[0],masses[1]) - 0.9*min(masses[0],masses[1]))/1.9)
+        # print(deficit)
         print(lowerbound_deficit)
 
         balanceScore = min(masses[0],masses[1])/max(masses[0],masses[1])
@@ -357,6 +416,7 @@ def main():
                         massList.append(containerdata)
                         index_list.append([i, j])
 
+        print("masslists: ")
         print(massList)
         # massList.sort(reverse=True)
         massList.sort(key=lambda x:x[0], reverse=True)
@@ -365,16 +425,15 @@ def main():
         print(massList)
         containerstomove = {}
         for data in massList:
-            if deficit == 0:
+            if lowerbound_deficit == 0:
                 break
-            if data[0] <= deficit:
+            if data[0] <= lowerbound_deficit:
                 containerstomove[data[1]] = 1
-                deficit -= data[0]
+                lowerbound_deficit -= data[0]
         print("here")
         print(containerstomove)
-        print(deficit)
+        print(lowerbound_deficit)
 
-        # start A* with manhattan
         heights = [0,0,0,0,0,0,0,0,0,0,0,0]
         bufferheights = [0,0,0,0,0,0,0,0,0,0,0,0]
         for row in ship:
@@ -401,56 +460,90 @@ def main():
                 containers_by_col[elem[0][1]].append(elem)
         for col in containers_by_col:
             col.sort(key=lambda x:x[1])
-            # print(col)
-        # print(containers_by_col)
-        # start moving containers
+        
+        # start moving and offloading containers
         total_distance = 0
         buffercount = 0
+        lastrow = 8
+        lastcol = 0
         smallest = getCol(containers_by_col)
         while smallest != 0:
+            print("smallest: ")
             print(smallest)
-            print(containers_by_col)
+            # print(containers_by_col)
             for i in range(smallest[1]):
                 dist = getDistance(heights[smallest[0][1]]-1,smallest[0][1],heights,containers_by_col)
                 total_distance += dist[0]
+                # print(smallest[0][0] + smallest[1] - i, smallest[0][1])
                 heights[smallest[0][1]] -= 1
                 if dist[1] != -1:
+                    # print(heights[dist[1]], dist[1])
+                    total_distance += manhattan(lastrow, lastcol, smallest[0][0] + smallest[1] - i, smallest[0][1])
+                    lastrow = heights[dist[1]]
+                    lastcol = dist[1]
+                    print("here1")
+                    printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1],heights[dist[1]], dist[1], heights)
                     heights[dist[1]] += 1
                 else:
-                    dst = getClosestDistance(7,11,bufferheights)
-                    total_distance += (dst*2)
+                    total_distance += manhattan(lastrow, lastcol, smallest[0][0] + smallest[1] - i, smallest[0][1])
+                    lastrow = 8
+                    lastcol = 0
+                    print("here2")
+                    printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1], 8, 0, heights)
+                    dst = getClosestDistance(8,11,bufferheights)
+                    total_distance += (dst*4) + 4
                     buffercount += 1
-                print(heights)
-            print(total_distance)
-            new_heights = []
-            if left:
-                print("left")
-                new_heights = heights[0:7]
-            else:
-                new_heights = heights[-6:]
-            print("new heights:" + str(new_heights))
-            total_distance += getDistance(heights[smallest[0][0]],smallest[0][0],heights,containers_by_col)[0]
-            # total_distance += getClosestDistanceForBalance(smallest[0][0], smallest[0][1], heights, left)[0]
+                name = logoutoption(first_name, last_name, log_file)
+                first_name = name[0]
+                last_name = name[1]
 
-            # for pair in tuple_list: #this one
-            #     print(tuple_list[pair][0][0]) #this one
-            #     # print(getClosestDistance(pair[1][0], pair[1][1], new_heights))
-            #     coord = tuple_list[pair][0][0]#this one
-            #     # print(type(coord))
-            #     # print(type(coord[0]))
-            #     # print(coord[1])
-            #     total_distance += getClosestDistance(coord[0], coord[1], new_heights)[0] #this onei just did [0] to get manhattan distance, if we want to keep track, need to edit this, but thats ur job diane
-            # total_distance += (7-smallest[0][0]+smallest[0][1])
-            # total_distance += (7-smallest[0][0]+smallest[0][1])
+                # print(heights)
+            print(smallest[0][0], smallest[0][1])
+            # print("8 0")
+            coord = [smallest[0][0], smallest[0][1]]
+            print("bool dawg")
+            print(left)
+            dist = getDistanceForBalance(heights[smallest[0][0]],smallest[0][1],heights,containers_by_col, left) #delete the +1 if its messing up
+            print("dist")
+            print(dist)
+            xcoord = dist[1]
+            ycoord = dist[0]
+            print(dist[1])
+            print(dist[0])
+            print(smallest[0][0])
+            print(smallest[0][1])
+            newcoords = manhattan(ycoord, xcoord, smallest[0][0], smallest[0][1])
+            print("newcoords")
+            print(newcoords)
+            total_distance += newcoords #HERE AS WELL, this is to update the total distance
             for elem in containers_by_col[smallest[0][1]]:
                 elem[1] -= (smallest[1] + 1)
-                print(elem)
+                # print(elem)
             heights[smallest[0][1]] -= 1
-            print(heights)
-            print(total_distance)
-            smallest = getCol(containers_by_col)
+            total_distance += manhattan(lastrow, lastcol, smallest[0][0], smallest[0][1])
+            lastrow = 8
+            lastcol = 0
+            print("here3")
+            printGrid(smallest[0][0],smallest[0][1], ycoord, xcoord, heights) #THIS LINE I THINK, this is to actually move it i think
+            heights[dist[1]] += 1
+            # print([smallest[0][1]])
+            # log_file.write(str(datetime.datetime.now()) + " " + [smallest[0][1]][0][2][1] + " container is offloaded\n")
+            # print(heights)
+            # print(total_distance)
+            containers_by_col[smallest[0][1]].pop(0)
+            smallest = getCol(containers_by_col)  
+            name = logoutoption(first_name, last_name, log_file)
+            first_name = name[0]
+            last_name = name[1]
         for i in range(buffercount):
-            total_distance += (getClosestDistance(7,0,heights) + 4)
+            dst = getClosestDistance(8,0,heights)
+            total_distance += (dst[0]*2 + 8)
+            print("here4")
+            printGrid(8,0,heights[dst[1]],dst[1],heights)
+            heights[dst[1]] += 1
+            name = logoutoption(first_name, last_name, log_file)
+            first_name = name[0]
+            last_name = name[1]
     
     log_file.close()
 
