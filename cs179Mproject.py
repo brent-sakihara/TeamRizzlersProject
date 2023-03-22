@@ -87,37 +87,105 @@ def makeRows(i,j,heights):
     print("Estimated time to completion is: " + getFormattedTime(DISTANCE))
 
 def printGrid(i,j,k,l,heights):
+    # print()
+    # print()
+    # print()
+    # print("Start coord tests")
+    mxheight = heights[j]
+    if j > l:
+        for n in range(j-l+2):
+            if heights[j - n] > mxheight:
+                mxheight = heights[j-n]
+    else:
+        for n in range(l-j+2):
+            if heights[j + n] > mxheight:
+                mxheight = heights[j+n]
+    heightdiff = mxheight - max(i,k)
+    if j == l:
+        heightdiff = 0
+    # print("height diff: ", heightdiff)
     while 1:
-        if k > i:
-            for n in range(k-i+1):
-                os.system('clear')
-                makeRows(7-(i+n),j,heights)
-                sleep(1.0)
-            if l < j:
-                for n2 in range(j-l):
+        if k >= i:
+            # print(heightdiff)
+            # print(i)
+            # print(j)
+            # print(k)
+            # print(l)
+            if heightdiff > 0:
+                for o in range(heightdiff):
                     os.system('clear')
-                    makeRows(7-k,j-n2-1,heights)
+                    makeRows(7-(i+o),j,heights)
                     sleep(1.0)
+                    # print(str(7-(i+o)), ", ", str(j))
+                for n in range(k-i+1): #go up
+                    os.system('clear')
+                    makeRows(7-(i+n+heightdiff),j,heights)
+                    sleep(1.0)
+                    # print(str(7-(i+n+heightdiff)), ", ", str(j))
+                if l < j: #go left
+                    for n2 in range(j-l):
+                        os.system('clear')
+                        makeRows(7-(k+heightdiff),j-n2-1,heights)
+                        sleep(1.0)
+                        # print(str(7-(k+heightdiff)), ", ", str(j-n2-1))
+                else: #go right
+                    for n2 in range(l-j):
+                        os.system('clear')
+                        makeRows(7-(k+heightdiff),j+n2+1,heights)
+                        sleep(1.0)
+                        # print(str(7-(k+heightdiff)), ", ", str(j+n2+1))
+                for o in range(heightdiff):
+                    os.system('clear')
+                    makeRows(7-(k+heightdiff-o-1),l,heights)
+                    sleep(1.0)
+                    # print(str(7-(k + heightdiff - o -1)), ", ", str(l))
+
             else:
-                for n2 in range(l-j):
+                for n in range(k-i+1): #go up
                     os.system('clear')
-                    makeRows(7-k,j+n2+1,heights)
+                    makeRows(7-(i+n),j,heights)
                     sleep(1.0)
+                    # print(str(7-(i+n)), ", ", str(j))
+                if l < j: #go left
+                    for n2 in range(j-l):
+                        os.system('clear')
+                        makeRows(7-k,j-n2-1,heights)
+                        sleep(1.0)
+                        # print(str(7-k), ", ", str(j-n2-1))
+                else: #go right
+                    for n2 in range(l-j):
+                        os.system('clear')
+                        makeRows(7-k,j+n2+1,heights)
+                        sleep(1.0)
+                        # print(str(7-k), ", ", str(j+n2+1))
         else:
-            if l < j:
-                for n2 in range(j-l+1):
-                    os.system('clear')
-                    makeRows(7-i,j-n2,heights)
-                    sleep(1.0)
-            else:
-                for n2 in range(l-j+1):
-                    os.system('clear')
-                    makeRows(7-i,j+n2,heights)
-                    sleep(1.0)
-            for n in range(i-k):
+            for o in range(heightdiff+1):
                 os.system('clear')
-                makeRows(7-(i-n-1),l,heights)
+                makeRows(7-i-o,j,heights)
                 sleep(1.0)
+                # print(str(7-i-o), ", ", str(j))
+            if l < j: #go left
+                for n2 in range(j-l-1):
+                    os.system('clear')
+                    makeRows(7-mxheight,j-n2-1,heights)
+                    sleep(1.0)
+                    # print(str(7-mxheight), ", ", str(j-n2-1))
+            else: #go right
+                for n2 in range(l-j-1):
+                    os.system('clear')
+                    makeRows(7-mxheight,j+n2+1,heights)
+                    sleep(1.0)
+                    # print(str(7-mxheight), ", ", str(j+n2+1))
+            for o in range(heightdiff):
+                os.system('clear')
+                makeRows(7-(mxheight-o),l,heights)
+                sleep(1.0)
+                # print(str(7-(mxheight-o)), ", ", str(l))
+            for n in range(i-k+1):
+                os.system('clear')
+                makeRows(7-(i-n),l,heights)
+                sleep(1.0)
+                # print(str(7-(i-n-1)), ", ", str(l))
         key = input("Enter q to go to next step or any other key to repeat animation: ")
         if key == "q":
             break
@@ -162,7 +230,7 @@ def getDistanceForBalance(i,j,heights,containers, left):
         min_with_container = 1000
         container_ind = -1
         for ind in range(len(heights)):
-            if ind <= 6:
+            if ind < 6:
                 if ind != j and heights[ind] < 8:
                     if len(containers[ind]) == 0:
                         if abs(i-heights[ind]) + abs(j-ind) < min_no_container:
@@ -173,7 +241,8 @@ def getDistanceForBalance(i,j,heights,containers, left):
                             min_with_container = abs(i-heights[ind]) + abs(j-ind)
                             container_ind = ind
         if min_no_container < 1000:
-            return [min_no_container,no_container_ind]
+            print(heights)
+            return [heights[no_container_ind],no_container_ind]
         elif min_with_container < 1000:
             return [min_with_container,container_ind]
         moves_to_buffer = (8-i+j+4)
@@ -292,6 +361,7 @@ def main():
     manifest_file_name = input("Please enter the manifest file name that you would like to open: ")
     container_count = 0
     file = open(manifest_file_name, "r")
+    manifest_file_without_ext = manifest_file_name[:-4]
     ship = [[],[],[],[],[],[],[],[]]
     for line in file:
         row = int(line[2:3])
@@ -491,6 +561,9 @@ def main():
                     d = manhattan(lastrow, lastcol, smallest[0][0] + smallest[1] - i, smallest[0][1])
                     lastrow = heights[dist[1]]
                     lastcol = dist[1]
+                    temp = ship[heights[smallest[0][1]]][smallest[0][1]]
+                    ship[heights[smallest[0][1]]][smallest[0][1]] = ship[heights[dist[1]]][dist[1]]
+                    ship[heights[dist[1]]][dist[1]] = temp
                     printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1],heights[dist[1]], dist[1], heights)
                     heights[dist[1]] += 1
                 else:
@@ -517,6 +590,7 @@ def main():
             DISTANCE -= manhattan(lastrow, lastcol, smallest[0][0], smallest[0][1])
             lastrow = 8
             lastcol = 0
+            ship[heights[smallest[0][1]]][smallest[0][1]] = [0, "UNUSED"]
             printGrid(smallest[0][0],smallest[0][1],8,0,heights)
             log_file.write(str(datetime.datetime.now()) + " " + containers_by_col[smallest[0][1]][0][2][1] + " container is offloaded\n")
             # print(heights)
@@ -549,8 +623,10 @@ def main():
         for i in range(len(containers_to_load)):
             dst = getClosestDistance(8,0,heights)
             DISTANCE -= 4
-            # print(dst[0])
+            # print(heights[dst[1]])
+            # print(dst[1])
             # print(containers_to_load)
+            ship[heights[dst[1]]][dst[1]] = [100, containers_to_load[i]]
             printGrid(8,0,heights[dst[1]],dst[1],heights)
             heights[dst[1]] += 1
             log_file.write(str(datetime.datetime.now()) + " " + containers_to_load[i] + " container is onloaded\n")
@@ -561,7 +637,7 @@ def main():
         print("Specified ship containers have successfully been loaded and unloaded!")
         # print(heights)
         
-        log_file.write(str(datetime.datetime.now()) + " Finished a Cycle. Manifest " + manifest_file_name + " was written to desktop, and a reminder popup to operator to send file was displayed")
+        log_file.write(str(datetime.datetime.now()) + " Finished a Cycle. Manifest " + manifest_file_without_ext + " was written to desktop, and a reminder popup to operator to send file was displayed")
         print("Please send the manifest file to the ship captain")
 
 
@@ -812,6 +888,9 @@ def main():
                     print("here1")
                     printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1],heights[dist[1]], dist[1], heights)
                     DISTANCE -= move_dist
+                    temp = ship[heights[smallest[0][1]]][smallest[0][1]]
+                    ship[heights[smallest[0][1]]][smallest[0][1]] = ship[heights[dist[1]]][dist[1]]
+                    ship[heights[dist[1]]][dist[1]] = temp
                     heights[dist[1]] += 1
                 else:
                     move_dist = manhattan(lastrow, lastcol, smallest[0][0] + smallest[1] - i, smallest[0][1])
@@ -859,6 +938,9 @@ def main():
             print(move_dist)
             printGrid(smallest[0][0],smallest[0][1], ycoord, xcoord, heights) #THIS LINE I THINK, this is to actually move it i think
             DISTANCE -= move_dist
+            temp = ship[heights[smallest[0][1]]][smallest[0][1]]
+            ship[heights[smallest[0][1]]][smallest[0][1]] = ship[heights[dist[1]]][dist[1]]
+            ship[heights[dist[1]]][dist[1]] = temp
             heights[dist[1]] += 1
             # print("Ship has been successfully balanced!")
             # print([smallest[0][1]])
@@ -882,7 +964,30 @@ def main():
             name = logoutoption(first_name, last_name, log_file)
             first_name = name[0]
             last_name = name[1]
-    
+
+    manifest_file_without_ext += "OUTBOUND.txt"
+    outfile = open(manifest_file_without_ext, "w")
+    for s in range(len(ship)):
+        for t in range(len(ship[0])):
+            st = "["
+            if s < 9:
+                st += "0"
+            st += str(s+1) + ","
+            if t < 9:
+                st += "0"
+            st += str(t+1) + "], {"
+            if ship[s][t][0] < 10000:
+                st += "0"
+            if ship[s][t][0] < 1000:
+                st += "0"
+            if ship[s][t][0] < 100:
+                st += "0"
+            if ship[s][t][0] < 10:
+                st += "0"
+            st += str(ship[s][t][0]) + "}, "
+            st += ship[s][t][1] + "\n"
+            outfile.write(st)
+    outfile.close()
     log_file.close()
 
 if __name__ == "__main__":
