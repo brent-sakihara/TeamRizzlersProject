@@ -8,8 +8,6 @@ import os
 
 global INITIAL
 global FINAL
-global INITIAL_COORD
-global FINAL_COORD
 
 global DISTANCE
 
@@ -32,10 +30,6 @@ def printG(rows):
 def makeRows(i,j,heights):
     # print("time")
     # print(getFormattedTime(461))
-    global INITIAL
-    global FINAL
-    global INITIAL_COORD
-    global FINAL_COORD
     global DISTANCE
     colorama.init()
     rows = []
@@ -61,12 +55,6 @@ def makeRows(i,j,heights):
     # printG(rows)
     #took inspiration from one of my personal projects
     #https://github.com/bshah016/CS_Projects/blob/master/TTT.py
-    # print(INITIAL)
-    # print(FINAL)
-    # rows[INITIAL[0]][INITIAL[1]] = termcolor2.colored('I ', 'magenta', attrs=["reverse", "blink"])
-    # rows[FINAL[0]][FINAL[1]] = termcolor2.colored('F ', 'magenta', attrs=["reverse", "blink"])
-    print("Initial Coordinates of Container to Move: " + str(INITIAL_COORD))
-    print("Final Coordinates of Container to Move: " + str(FINAL_COORD))
     print('\
  ╔════╦════╦════╦════╦════╦════╦════╦════╦════╦════╦════╦════╗\t\n\
  ║ {0} ║ {1} ║ {2} ║ {3} ║ {4} ║ {5} ║ {6} ║ {7} ║ {8} ║ {9} ║ {10} ║ {11} ║\t\n\
@@ -99,15 +87,6 @@ def makeRows(i,j,heights):
     print("Estimated time to completion is: " + getFormattedTime(DISTANCE))
 
 def printGrid(i,j,k,l,heights):
-    global INITIAL
-    global FINAL
-    global INITIAL_COORD
-    global FINAL_COORD  
-    length = len(heights)
-    INITIAL = [8 - i, j]
-    FINAL = [8 - k, l]
-    INITIAL_COORD = [i + 1, j + 1]
-    FINAL_COORD = [k + 1, l + 1]
     while 1:
         if k > i:
             for n in range(k-i+1):
@@ -344,13 +323,22 @@ def main():
         container_freq = {}
         print("Once you are done with entering containers, enter q to quit")
         while(1):
-            container_name = input("Please enter a container you would like to remove from the ship: ")
+            container_name = input("Please enter a container you would like to REMOVE from the ship: ")
             if(container_name == "q"):
                 break
             elif container_name in container_freq:
                 container_freq[container_name] += 1
             else:
                 container_freq[container_name] = 1
+        print()
+        containers_to_load = []
+        # print("Once you are done with entering containers, enter q to quit")
+        while(1):
+            container_name = input("Please enter a container you would like to LOAD onto the ship: ")
+            if(container_name == "q"):
+                break
+            else:
+                containers_to_load.append(container_name)
         # start A* with manhattan
         heights = [0,0,0,0,0,0,0,0,0,0,0,0]
         bufferheights = [0,0,0,0,0,0,0,0,0,0,0,0]
@@ -378,8 +366,8 @@ def main():
         for col in containers_by_col:
             col.sort(key=lambda x:x[1])
             # print(col)
-        
-        # start moving and offloading containers
+
+
         total_distance = 0
         buffercount = 0
         lastrow = 8
@@ -398,17 +386,17 @@ def main():
                     total_distance += manhattan(lastrow, lastcol, smallest[0][0] + smallest[1] - i, smallest[0][1])
                     lastrow = heights[dist[1]]
                     lastcol = dist[1]
-                    printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1],heights[dist[1]], dist[1], heights)
+                    # printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1],heights[dist[1]], dist[1], heights)
                     heights[dist[1]] += 1
                 else:
                     total_distance += manhattan(lastrow, lastcol, smallest[0][0] + smallest[1] - i, smallest[0][1])
                     lastrow = 8
                     lastcol = 0
-                    printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1], 8, 0, heights)
+                    # printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1], 8, 0, heights)
                     dst = getClosestDistance(8,11,bufferheights)
                     total_distance += (dst*4) + 4
                     buffercount += 1
-                name = logoutoption(first_name, last_name, log_file)
+                # name = logoutoption(first_name, last_name, log_file)
                 first_name = name[0]
                 last_name = name[1]
 
@@ -423,6 +411,112 @@ def main():
             total_distance += manhattan(lastrow, lastcol, smallest[0][0], smallest[0][1])
             lastrow = 8
             lastcol = 0
+            # printGrid(smallest[0][0],smallest[0][1],8,0,heights)
+            # log_file.write(str(datetime.datetime.now()) + " " + containers_by_col[smallest[0][1]][0][2][1] + " container is offloaded\n")
+            # print(heights)
+            # print(total_distance)
+            containers_by_col[smallest[0][1]].pop(0)
+            smallest = getCol(containers_by_col)  
+            # name = logoutoption(first_name, last_name, log_file)
+            first_name = name[0]
+            last_name = name[1]
+        for i in range(buffercount):
+            dst = getClosestDistance(8,0,heights)
+            total_distance += (dst[0]*2 + 8)
+            # printGrid(8,0,heights[dst[1]],dst[1],heights)
+            heights[dst[1]] += 1
+            # name = logoutoption(first_name, last_name, log_file)
+            first_name = name[0]
+            last_name = name[1]
+
+        # start onloading container process
+        for i in range(len(containers_to_load)):
+            dst = getClosestDistance(8,0,heights)
+            total_distance += ((dst[0] + 2)*2)
+            # printGrid(8,0,heights[dst[1]],dst[1],heights)
+            heights[dst[1]] += 1
+            # log_file.write(str(datetime.datetime.now()) + " " + containers_to_load[i] + " container is onloaded\n")
+            # name = logoutoption(first_name, last_name, log_file)
+            first_name = name[0]
+            last_name = name[1]
+        print("DISTANCE ESTIMATED: ", total_distance)
+        DISTANCE = total_distance
+
+
+
+        heights = [0,0,0,0,0,0,0,0,0,0,0,0]
+        bufferheights = [0,0,0,0,0,0,0,0,0,0,0,0]
+        for row in ship:
+            for i in range(len(row)):
+                if row[i][1] != "UNUSED":
+                    heights[i] += 1
+        containers = {}
+        for i in range(len(ship)):
+            for j in range(len(ship[i])):
+                if ship[i][j][1] in container_freq:
+                    if ship[i][j][1] in containers:
+                        containers[ship[i][j][1]].append([[i,j],heights[j] - 1 - i,ship[i][j]])
+                    else:
+                        containers[ship[i][j][1]] = [[[i,j],heights[j] - 1 - i,ship[i][j]]]
+        for container in containers:
+            containers[container].sort(key=lambda x:x[1])
+            while len(containers[container]) > container_freq[container]:
+                containers[container].pop(container_freq[container])
+        # print(containers)
+        containers_by_col = [[],[],[],[],[],[],[],[],[],[],[],[]]
+        for container in containers:
+            for elem in containers[container]:
+                containers_by_col[elem[0][1]].append(elem)
+        for col in containers_by_col:
+            col.sort(key=lambda x:x[1])
+
+        # start moving and offloading containers
+        total_distance = 0
+        buffercount = 0
+        lastrow = 8
+        lastcol = 0
+        smallest = getCol(containers_by_col)
+        while smallest != 0:
+            # print(smallest)
+            # print(containers_by_col)
+            for i in range(smallest[1]):
+                dist = getDistance(heights[smallest[0][1]]-1,smallest[0][1],heights,containers_by_col)
+                total_distance += dist[0]
+                DISTANCE -= dist[0]
+                # print(smallest[0][0] + smallest[1] - i, smallest[0][1])
+                heights[smallest[0][1]] -= 1
+                d = 0
+                if dist[1] != -1:
+                    # print(heights[dist[1]], dist[1])
+                    d = manhattan(lastrow, lastcol, smallest[0][0] + smallest[1] - i, smallest[0][1])
+                    lastrow = heights[dist[1]]
+                    lastcol = dist[1]
+                    printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1],heights[dist[1]], dist[1], heights)
+                    heights[dist[1]] += 1
+                else:
+                    d = manhattan(lastrow, lastcol, smallest[0][0] + smallest[1] - i, smallest[0][1])
+                    lastrow = 8
+                    lastcol = 0
+                    printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1], 8, 0, heights)
+                    dst = getClosestDistance(8,11,bufferheights)
+                    total_distance += (dst*4) + 4
+                    buffercount += 1
+                name = logoutoption(first_name, last_name, log_file)
+                first_name = name[0]
+                last_name = name[1]
+                DISTANCE -= d
+
+                # print(heights)
+            # print(smallest[0][0], smallest[0][1])
+            # print("8 0")
+            d = (8-smallest[0][0]+smallest[0][1]) + 4
+            for elem in containers_by_col[smallest[0][1]]:
+                elem[1] -= (smallest[1] + 1)
+                # print(elem)
+            heights[smallest[0][1]] -= 1
+            DISTANCE -= manhattan(lastrow, lastcol, smallest[0][0], smallest[0][1])
+            lastrow = 8
+            lastcol = 0
             printGrid(smallest[0][0],smallest[0][1],8,0,heights)
             log_file.write(str(datetime.datetime.now()) + " " + containers_by_col[smallest[0][1]][0][2][1] + " container is offloaded\n")
             # print(heights)
@@ -432,34 +526,39 @@ def main():
             name = logoutoption(first_name, last_name, log_file)
             first_name = name[0]
             last_name = name[1]
+            DISTANCE -= d
         for i in range(buffercount):
             dst = getClosestDistance(8,0,heights)
-            total_distance += (dst[0]*2 + 8)
+            d = (dst[0]*2 + 8)
             printGrid(8,0,heights[dst[1]],dst[1],heights)
             heights[dst[1]] += 1
             name = logoutoption(first_name, last_name, log_file)
             first_name = name[0]
             last_name = name[1]
+            DISTANCE -= d
 
         # start onloading container process
-        containers_to_load = []
-        print("Once you are done with entering containers, enter q to quit")
-        while(1):
-            container_name = input("Please enter a container you would like to load onto the ship: ")
-            if(container_name == "q"):
-                break
-            else:
-                containers_to_load.append(container_name)
+        # containers_to_load = []
+        # print("Once you are done with entering containers, enter q to quit")
+        # while(1):
+        #     container_name = input("Please enter a container you would like to load onto the ship: ")
+        #     if(container_name == "q"):
+        #         break
+        #     else:
+        #         containers_to_load.append(container_name)
         for i in range(len(containers_to_load)):
             dst = getClosestDistance(8,0,heights)
-            total_distance += ((dst[0] + 2)*2)
+            DISTANCE -= 4
+            # print(dst[0])
+            # print(containers_to_load)
             printGrid(8,0,heights[dst[1]],dst[1],heights)
             heights[dst[1]] += 1
             log_file.write(str(datetime.datetime.now()) + " " + containers_to_load[i] + " container is onloaded\n")
             name = logoutoption(first_name, last_name, log_file)
             first_name = name[0]
             last_name = name[1]
-        print("total number of minutes moving containers is: ", total_distance)
+            DISTANCE -= (dst[0]*2)
+        print("Specified ship containers have successfully been loaded and unloaded!")
         # print(heights)
         
         log_file.write(str(datetime.datetime.now()) + " Finished a Cycle. Manifest " + manifest_file_name + " was written to desktop, and a reminder popup to operator to send file was displayed")
