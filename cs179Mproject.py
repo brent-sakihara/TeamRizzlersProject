@@ -113,76 +113,76 @@ def printGrid(i,j,k,l,heights):
             # print(l)
             if heightdiff > 0:
                 for o in range(heightdiff):
-                    # os.system('clear')
+                    os.system('clear')
                     makeRows(7-(i+o),j,heights)
                     sleep(1.0)
                     # print(str(7-(i+o)), ", ", str(j))
                 for n in range(k-i+1): #go up
-                    # os.system('clear')
+                    os.system('clear')
                     makeRows(7-(i+n+heightdiff),j,heights)
                     sleep(1.0)
                     # print(str(7-(i+n+heightdiff)), ", ", str(j))
                 if l < j: #go left
                     for n2 in range(j-l):
-                        # os.system('clear')
+                        os.system('clear')
                         makeRows(7-(k+heightdiff),j-n2-1,heights)
                         sleep(1.0)
                         # print(str(7-(k+heightdiff)), ", ", str(j-n2-1))
                 else: #go right
                     for n2 in range(l-j):
-                        # os.system('clear')
+                        os.system('clear')
                         makeRows(7-(k+heightdiff),j+n2+1,heights)
                         sleep(1.0)
                         # print(str(7-(k+heightdiff)), ", ", str(j+n2+1))
                 for o in range(heightdiff):
-                    # os.system('clear')
+                    os.system('clear')
                     makeRows(7-(k+heightdiff-o-1),l,heights)
                     sleep(1.0)
                     # print(str(7-(k + heightdiff - o -1)), ", ", str(l))
 
             else:
                 for n in range(k-i+1): #go up
-                    # os.system('clear')
+                    os.system('clear')
                     makeRows(7-(i+n),j,heights)
                     sleep(1.0)
                     # print(str(7-(i+n)), ", ", str(j))
                 if l < j: #go left
                     for n2 in range(j-l):
-                        # os.system('clear')
+                        os.system('clear')
                         makeRows(7-k,j-n2-1,heights)
                         sleep(1.0)
                         # print(str(7-k), ", ", str(j-n2-1))
                 else: #go right
                     for n2 in range(l-j):
-                        # os.system('clear')
+                        os.system('clear')
                         makeRows(7-k,j+n2+1,heights)
                         sleep(1.0)
                         # print(str(7-k), ", ", str(j+n2+1))
         else:
             for o in range(heightdiff+1):
-                # os.system('clear')
+                os.system('clear')
                 makeRows(7-i-o,j,heights)
                 sleep(1.0)
                 # print(str(7-i-o), ", ", str(j))
             if l < j: #go left
                 for n2 in range(j-l-1):
-                    # os.system('clear')
+                    os.system('clear')
                     makeRows(7-mxheight,j-n2-1,heights)
                     sleep(1.0)
                     # print(str(7-mxheight), ", ", str(j-n2-1))
             else: #go right
                 for n2 in range(l-j-1):
-                    # os.system('clear')
+                    os.system('clear')
                     makeRows(7-mxheight,j+n2+1,heights)
                     sleep(1.0)
                     # print(str(7-mxheight), ", ", str(j+n2+1))
             for o in range(heightdiff):
-                # os.system('clear')
+                os.system('clear')
                 makeRows(7-(mxheight-o),l,heights)
                 sleep(1.0)
                 # print(str(7-(mxheight-o)), ", ", str(l))
             for n in range(i-k+1):
-                # os.system('clear')
+                os.system('clear')
                 makeRows(7-(i-n),l,heights)
                 sleep(1.0)
                 # print(str(7-(i-n-1)), ", ", str(l))
@@ -241,7 +241,7 @@ def getDistanceForBalance(i,j,heights,containers, left):
                             min_with_container = abs(i-heights[ind]) + abs(j-ind)
                             container_ind = ind
         if min_no_container < 1000:
-            # print(heights)
+            print(heights)
             return [heights[no_container_ind],no_container_ind]
         elif min_with_container < 1000:
             return [min_with_container,container_ind]
@@ -252,20 +252,20 @@ def getDistanceForBalance(i,j,heights,containers, left):
         no_container_ind = -1
         min_with_container = 1000
         container_ind = -1
-        # print("dist containers:")
-        # print(containers)
+        print("dist containers:")
+        print(containers)
         length = len(heights)
-        # print("length: " + str(length))
-        # print(heights)
+        print("length: " + str(length))
+        print(heights)
         # heights = heights[-6:]
         for ind in range(len(heights)):
             if ind >= 6:
                 if heights[ind] < 8:
                     if len(containers[ind]) == 0:
                         if abs(i-heights[ind]) + abs(j-ind) < min_no_container:
-                            # print("yessirski2")
-                            # print("ind: " + str(ind))
-                            # print("heights: " + str(heights[ind]))
+                            print("yessirski2")
+                            print("ind: " + str(ind))
+                            print("heights: " + str(heights[ind]))
                             min_no_container = abs(i-heights[ind])
                             no_container_ind = ind
                     else:
@@ -273,8 +273,8 @@ def getDistanceForBalance(i,j,heights,containers, left):
                             min_with_container = abs(i-heights[ind]) + abs(j-ind)
                             container_ind = ind
         if min_no_container < 1000:
-            # print("ind bruh: " + str(no_container_ind))
-            # print(heights[no_container_ind])
+            print("ind bruh: " + str(no_container_ind))
+            print(heights[no_container_ind])
             return [heights[no_container_ind],no_container_ind]
             # return [min_no_container,no_container_ind]
         elif min_with_container < 1000:
@@ -293,7 +293,7 @@ def getClosestDistance(i,j,heights):
     return [mindist, container_ind]
 
 def getClosestDistanceForBalance(i,j,heights,left):
-    # print(heights)
+    print(heights)
     if left:
         mindist = 1000
         container_ind = -1
@@ -326,7 +326,13 @@ def signin(first_name, last_name, log_file):
     print("Hello and welcome to Mr Keogh's shipping dock.")
     print("Enter your full name to sign in and start working")
     first_name = input("First Name: ")
+    while first_name == "":
+        print("Invalid name, please try again")
+        first_name = input("First Name: ")
     last_name = input("Last Name: ")
+    while last_name == "":
+        print("Invalid name, please try again")
+        last_name = input("Last Name: ")
     print("Welcome " + first_name + " " + last_name)
     print()
     log_file.write(str(datetime.datetime.now()) + " " + first_name + " " + last_name + " signs in\n")
@@ -374,22 +380,6 @@ def main():
         name = line[18:].strip()
         ship[row-1].append([int(weight),name])
     file.close()
-    file = open(manifest_file_name, "r")
-    manifest_file_without_ext = manifest_file_name[:-4]
-    ship_coords = [[],[],[],[],[],[],[],[]]
-    for line in file:
-        row = int(line[2:3])
-        col = int(line[4:6]) #might have to be 5:6
-        # weight = line[10:15].lstrip('0')
-        # if weight == "":
-        #     weight = "0"
-        # else:
-        #     container_count += 1
-        name = line[18:].strip()
-        coordinate = [row, col]
-        # print("here")
-        ship_coords[row-1].append([tuple(coordinate),name])
-    file.close()
     log_file.write(str(datetime.datetime.now()) + " Manifest " + manifest_file_name + " is opened, there are " + str(container_count) + " containers on the ship\n")
 
     # for s in ship:
@@ -410,6 +400,9 @@ def main():
         print("Once you are done with entering containers, enter q to quit")
         while(1):
             container_name = input("Please enter a container you would like to REMOVE from the ship: ")
+            while container_name == "" or container_name == "NAN" or container_name == "UNUSED":
+                print("Invalid name, please try again")
+                container_name = input("Please enter a container you would like to REMOVE from the ship: ")
             if(container_name == "q"):
                 break
             elif container_name in container_freq:
@@ -421,6 +414,9 @@ def main():
         # print("Once you are done with entering containers, enter q to quit")
         while(1):
             container_name = input("Please enter a container you would like to LOAD onto the ship: ")
+            while container_name == "" or container_name == "NAN" or container_name == "UNUSED":
+                print("Invalid name, please try again")
+                container_name = input("Please enter a container you would like to LOAD onto the ship: ")
             if(container_name == "q"):
                 break
             else:
@@ -642,7 +638,11 @@ def main():
             # print(heights[dst[1]])
             # print(dst[1])
             # print(containers_to_load)
-            ship[heights[dst[1]]][dst[1]] = [100, containers_to_load[i]]
+            weight2 = int(input("Enter the weight of the " + containers_to_load[i] + " container: "))
+            while(weight2 < 1 or weight2 > 99999):
+                print("Invalid weight, please enter weight between 1 and 99999")
+                weight2 = int(input("Enter the weight of the " + containers_to_load[i] + " container: "))
+            ship[heights[dst[1]]][dst[1]] = [weight2, containers_to_load[i]]
             printGrid(8,0,heights[dst[1]],dst[1],heights)
             heights[dst[1]] += 1
             log_file.write(str(datetime.datetime.now()) + " " + containers_to_load[i] + " container is onloaded\n")
@@ -674,10 +674,10 @@ def main():
         # deficit = balancemass - masses[0]
         lowerbound_deficit = math.ceil((max(masses[0],masses[1]) - 0.9*min(masses[0],masses[1]))/1.9)
         # print(deficit)
-        # print(lowerbound_deficit)
+        print(lowerbound_deficit)
 
         balanceScore = min(masses[0],masses[1])/max(masses[0],masses[1])
-        # print(balanceScore)
+        print(balanceScore)
         # if (balanceScore < 0.9):
         # print('len of ship' + str(len(ship[0])))
         if left:
@@ -687,49 +687,35 @@ def main():
                     containerdata = ship[i][j]
                     if containerdata[0] != 0:
                         massList.append(containerdata)
-                        coord_on_grid = [i, j]
-                        tupl = [containerdata, coord_on_grid]
-                        index_list.append(tupl)
+                        index_list.append([i, j])
         else:
             for i in range(len(ship)):
                 # print(ship[i]) #HERE
                 for j in range (0,7):
                     containerdata = ship[i][j]
-                    # containerdata[2] = ship_coords[i][j][0]
                     if containerdata[0] != 0:
                         massList.append(containerdata)
-                        coord_on_grid = [i, j]
-                        tupl = [containerdata, coord_on_grid]
-                        index_list.append(tupl)
+                        index_list.append([i, j])
         # BOTH BELOW
         # print("masslists: ")
         # print(massList)
         # massList.sort(reverse=True)
         massList.sort(key=lambda x:x[0], reverse=True)
-        index_list.sort(key=lambda x:x[0][0], reverse=True)
         # massList.sort(reverse=True)
-        print("THIS ONE...")
-        print(massList) #THIS ONE
-        print(index_list)
-        # print(ship_coords)
+
+        # print(massList) #THIS ONE
         containerstomove = {}
-        coordinate_list = {}
         for data in massList:
             if lowerbound_deficit == 0:
                 break
             if data[0] <= lowerbound_deficit:
                 containerstomove[data[1]] = 1
-                # coordinate_list[data[1]] = 
                 lowerbound_deficit -= data[0]
         #ALL 3 Below
-        print("here") 
-        print(containerstomove)
+        # print("here") 
+        # print(containerstomove)
         # print(lowerbound_deficit)
-        for element in index_list:
-            if element[0][1] not in containerstomove:
-                # print("element[0]: " + str(element[0]))
-                index_list.remove(element)
-        print(index_list)
+
         heights = [0,0,0,0,0,0,0,0,0,0,0,0]
         bufferheights = [0,0,0,0,0,0,0,0,0,0,0,0]
         for row in ship:
@@ -765,14 +751,13 @@ def main():
         lastrow = 8
         lastcol = 0
         smallest = getCol(containers_by_col)
-        crane_move = []
         while smallest != 0:
             # print("smallest: ")
             # print(smallest)
             # print(containers_by_col)
             for i in range(smallest[1]):
                 dist = getDistance(heights[smallest[0][1]]-1,smallest[0][1],heights,containers_by_col) #add back in a -1 to first param
-                total_distance += dist[0] #WHAT DOES THIS DO
+                total_distance += dist[0]
                 # print("bruh1: ")
                 # print(dist[0])
                 # print(total_distance)
@@ -823,27 +808,8 @@ def main():
             # print(smallest[0][0])
             # print(smallest[0][1])
             newcoords = manhattan(ycoord, xcoord, smallest[0][0], smallest[0][1])
-            print("newcoords")
-            if len(index_list) != 1:
-                # print(str(index_list[0][1]))
-                test_dist = manhattan(ycoord, xcoord, index_list[0][1][1], index_list[0][0][0])
-                index_list.pop(0)
-                crane_move.append(test_dist)
-                total_distance += test_dist
-                # print("test_dist: " + str(test_dist))
-            # test_dist = manhattan(ycoord, xcoord, index_list[0][1], index_list[0][0])
-            
+            # print("newcoords")
             # print(newcoords)
-            #NEW ONE HERE
-            # for el in massList:
-            #     print("el: " + str(el))
-            #     for key in index_list:
-            #         print("key: " + str(key))
-            #         print(index_list[el[1]])
-            #         if el[1] == key:
-            #             print("key + 1: " + str(index_list[key][0]))
-            #             test_dist = manhattan(index_list[key][0], index_list[key + 1][1], ycoord, xcoord)
-            #             print("test_dist: " + test_dist)
             total_distance += newcoords #HERE AS WELL, this is to update the total distance
             # print("maybe here:")
             # print(newcoords)
@@ -896,7 +862,7 @@ def main():
                         containers[ship[i][j][1]].append([[i,j],heights[j] - 1 - i])
                     else:
                         containers[ship[i][j][1]] = [[[i,j],heights[j] - 1 - i]]
-        # print(containers)
+        print(containers)
         for container in containers:
             containers[container].sort(key=lambda x:x[1])
             while len(containers[container]) > containerstomove[container]:
@@ -911,21 +877,21 @@ def main():
         
         #ACTUAL OUTPUT
         # start moving and offloading containers
-        # print("global dist: ")
-        # print(DISTANCE)
+        print("global dist: ")
+        print(DISTANCE)
         total_distance = 0
         buffercount = 0
         lastrow = 8
         lastcol = 0
         smallest = getCol(containers_by_col)
         while smallest != 0:
-            # print("smallest: ")
-            # print(smallest)
+            print("smallest: ")
+            print(smallest)
             # print(containers_by_col)
             for i in range(smallest[1]):
                 dist = getDistance(heights[smallest[0][1]]-1,smallest[0][1],heights,containers_by_col)
                 total_distance += dist[0]
-                # print("homie: " + str(dist[0]))
+                print("homie: " + str(dist[0]))
                 # DISTANCE -= dist[0]
                 # print(smallest[0][0] + smallest[1] - i, smallest[0][1])
                 heights[smallest[0][1]] -= 1
@@ -935,11 +901,9 @@ def main():
                     total_distance += move_dist
                     lastrow = heights[dist[1]]
                     lastcol = dist[1]
-                    # print("here1")
+                    print("here1")
                     printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1],heights[dist[1]], dist[1], heights)
                     DISTANCE -= move_dist
-                    DISTANCE -= crane_move[0]
-                    crane_move.pop(0)
                     temp = ship[heights[smallest[0][1]]][smallest[0][1]]
                     ship[heights[smallest[0][1]]][smallest[0][1]] = ship[heights[dist[1]]][dist[1]]
                     ship[heights[dist[1]]][dist[1]] = temp
@@ -949,11 +913,9 @@ def main():
                     total_distance += move_dist
                     lastrow = 8
                     lastcol = 0
-                    # print("here2")
+                    print("here2")
                     printGrid(smallest[0][0] + smallest[1] - i, smallest[0][1], 8, 0, heights)
                     DISTANCE -= move_dist
-                    DISTANCE -= crane_move[0]
-                    crane_move.pop(0)
                     dst = getClosestDistance(8,11,bufferheights)
                     total_distance += (dst*4) + 4
                     buffercount += 1
@@ -962,23 +924,23 @@ def main():
                 last_name = name[1]
 
                 # print(heights)
-            # print(smallest[0][0], smallest[0][1])
+            print(smallest[0][0], smallest[0][1])
             # print("8 0")
             coord = [smallest[0][0], smallest[0][1]]
-            # print("bool dawg")
-            # print(left)
+            print("bool dawg")
+            print(left)
             dist = getDistanceForBalance(heights[smallest[0][0]],smallest[0][1],heights,containers_by_col, left) #delete the +1 if its messing up
-            # print("dist")
-            # print(dist)
+            print("dist")
+            print(dist)
             xcoord = dist[1]
             ycoord = dist[0]
-            # print(dist[1])
-            # print(dist[0])
-            # print(smallest[0][0])
-            # print(smallest[0][1])
+            print(dist[1])
+            print(dist[0])
+            print(smallest[0][0])
+            print(smallest[0][1])
             newcoords = manhattan(ycoord, xcoord, smallest[0][0], smallest[0][1])
-            # print("newcoords")
-            # print(newcoords)
+            print("newcoords")
+            print(newcoords)
             total_distance += newcoords #HERE AS WELL, this is to update the total distance
             for elem in containers_by_col[smallest[0][1]]:
                 elem[1] -= (smallest[1] + 1)
@@ -988,12 +950,10 @@ def main():
             total_distance += move_dist
             lastrow = 8
             lastcol = 0
-            # print("here3")
-            # print(move_dist)
+            print("here3")
+            print(move_dist)
             printGrid(smallest[0][0],smallest[0][1], ycoord, xcoord, heights) #THIS LINE I THINK, this is to actually move it i think
             DISTANCE -= move_dist
-            DISTANCE -= crane_move[0]
-            crane_move.pop(0)
             temp = ship[heights[smallest[0][1]]][smallest[0][1]]
             ship[heights[smallest[0][1]]][smallest[0][1]] = ship[heights[dist[1]]][dist[1]]
             ship[heights[dist[1]]][dist[1]] = temp
@@ -1013,10 +973,8 @@ def main():
             dst = getClosestDistance(8,0,heights)
             move_dist = (dst[0]*2 + 8)
             total_distance += move_dist
-            # print("here4")
+            print("here4")
             DISTANCE -= move_dist
-            DISTANCE -= crane_move[0]
-            crane_move.pop(0)
             printGrid(8,0,heights[dst[1]],dst[1],heights)
             heights[dst[1]] += 1
             name = logoutoption(first_name, last_name, log_file)
