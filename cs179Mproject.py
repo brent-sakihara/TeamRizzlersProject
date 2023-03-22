@@ -8,6 +8,8 @@ import os
 
 global INITIAL
 global FINAL
+global INITIAL_COORD
+global FINAL_COORD
 
 global DISTANCE
 
@@ -30,6 +32,10 @@ def printG(rows):
 def makeRows(i,j,heights):
     # print("time")
     # print(getFormattedTime(461))
+    global INITIAL
+    global FINAL
+    global INITIAL_COORD
+    global FINAL_COORD
     global DISTANCE
     colorama.init()
     rows = []
@@ -55,6 +61,12 @@ def makeRows(i,j,heights):
     # printG(rows)
     #took inspiration from one of my personal projects
     #https://github.com/bshah016/CS_Projects/blob/master/TTT.py
+    # print(INITIAL)
+    # print(FINAL)
+    # rows[INITIAL[0]][INITIAL[1]] = termcolor2.colored('I ', 'magenta', attrs=["reverse", "blink"])
+    # rows[FINAL[0]][FINAL[1]] = termcolor2.colored('F ', 'magenta', attrs=["reverse", "blink"])
+    print("Initial Coordinates of Container to Move: " + str(INITIAL_COORD))
+    print("Final Coordinates of Container to Move: " + str(FINAL_COORD))
     print('\
  ╔════╦════╦════╦════╦════╦════╦════╦════╦════╦════╦════╦════╗\t\n\
  ║ {0} ║ {1} ║ {2} ║ {3} ║ {4} ║ {5} ║ {6} ║ {7} ║ {8} ║ {9} ║ {10} ║ {11} ║\t\n\
@@ -87,6 +99,15 @@ def makeRows(i,j,heights):
     print("Estimated time to completion is: " + getFormattedTime(DISTANCE))
 
 def printGrid(i,j,k,l,heights):
+    global INITIAL
+    global FINAL
+    global INITIAL_COORD
+    global FINAL_COORD  
+    length = len(heights)
+    INITIAL = [8 - i, j]
+    FINAL = [8 - k, l]
+    INITIAL_COORD = [i + 1, j + 1]
+    FINAL_COORD = [k + 1, l + 1]
     while 1:
         if k > i:
             for n in range(k-i+1):
