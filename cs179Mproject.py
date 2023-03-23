@@ -968,7 +968,6 @@ def main():
             name = logoutoption(first_name, last_name, log_file)
             first_name = name[0]
             last_name = name[1]
-        print("Ship has been successfully balanced!")
         for i in range(buffercount):
             dst = getClosestDistance(8,0,heights)
             move_dist = (dst[0]*2 + 8)
@@ -980,6 +979,9 @@ def main():
             name = logoutoption(first_name, last_name, log_file)
             first_name = name[0]
             last_name = name[1]
+        print("Ship has been successfully balanced!")
+        log_file.write(str(datetime.datetime.now()) + " " + first_name + " " + last_name + " successfully balanced ship.\n")
+
 
     manifest_file_without_ext += "OUTBOUND.txt"
     outfile = open(manifest_file_without_ext, "w")
