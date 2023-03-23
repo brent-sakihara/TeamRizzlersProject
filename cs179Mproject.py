@@ -653,7 +653,7 @@ def main():
         print("Specified ship containers have successfully been loaded and unloaded!")
         # print(heights)
         
-        log_file.write(str(datetime.datetime.now()) + " Finished a Cycle. Manifest " + manifest_file_without_ext + " was written to desktop, and a reminder popup to operator to send file was displayed")
+        log_file.write(str(datetime.datetime.now()) + " Finished a Cycle. Manifest " + manifest_file_without_ext + " was written to desktop, and a reminder popup to operator to send file was displayed\n")
         print("Please send the manifest file to the ship captain")
 
 
@@ -980,6 +980,8 @@ def main():
             first_name = name[0]
             last_name = name[1]
         print("Ship has been successfully balanced!")
+        log_file.write(str(datetime.datetime.now()) + " Finished a Cycle. Manifest " + manifest_file_without_ext + " was written to desktop, and a reminder popup to operator to send file was displayed\n")
+        print("Please send the manifest file to the ship captain")
         log_file.write(str(datetime.datetime.now()) + " " + first_name + " " + last_name + " successfully balanced ship.\n")
 
 
